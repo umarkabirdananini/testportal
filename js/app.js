@@ -1,35 +1,27 @@
 /* =========================================================
-   Selection Slip App – FINAL (Desktop + iPhone SAFE + QR BALANCED)
+   Selection Slip App – FINAL (Responsive + QR + iPhone SAFE)
    ========================================================= */
 
 let MASTER = [];
 let currentRecord = null;
 
-/* MUST be HTTPS */
 const TRACK_WEBHOOK_URL =
   "https://script.google.com/macros/s/AKfycbxLSML3csbZjm-0DKVcg0BDBQM2Nz9iqzXxUunrA98Ydeq115PlLiD1hRyn_MRnK8t33A/exec";
 
 const $ = (sel) => document.querySelector(sel);
 
-/* ------------------------------
-   Load master list
--------------------------------- */
+/* ------------------------------ */
 async function loadData() {
   try {
     const res = await fetch("./data/masterlist.json", { cache: "no-store" });
     if (!res.ok) throw new Error("masterlist.json not found");
     MASTER = await res.json();
   } catch (err) {
-    showStatus(
-      "danger",
-      "Master list could not be loaded. Please contact support."
-    );
+    showStatus("danger", "Master list could not be loaded.");
   }
 }
 
-/* ------------------------------
-   Helpers
--------------------------------- */
+/* ------------------------------ */
 function normalizeRef(v) {
   return String(v || "")
     .trim()
@@ -65,7 +57,7 @@ function escapeHtml(str) {
 }
 
 /* ------------------------------
-   Slip HTML (PROFESSIONAL BALANCED VERSION)
+   Responsive Slip
 -------------------------------- */
 function buildSlipHTML(r) {
   const dateStr = new Date().toLocaleDateString(undefined, {
@@ -75,122 +67,122 @@ function buildSlipHTML(r) {
   });
 
   const photo =
-    r.photoUrl && r.photoUrl.trim()
-      ? r.photoUrl.trim()
-      : "https://via.placeholder.com/240x280.png?text=Passport";
+    r.photoUrl?.trim() ||
+    "https://via.placeholder.com/240x280.png?text=Passport";
 
-  const edu =
-    r.educationLevel && r.educationLevel.trim()
-      ? r.educationLevel.trim()
-      : "—";
+  const edu = r.educationLevel?.trim() || "—";
 
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
     normalizeRef(r.reference)
   )}`;
 
   return `
-  <div class="slip-header">
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="d-flex gap-3 align-items-center">
-        <img class="logo"
-             src="https://sokotostate.gov.ng/wp-content/uploads/2024/06/Sokoto-State-Government-600-x-200-px-1.png">
-        <div>
-          <div class="slip-title">Appointment Notification Slip</div>
-          <div class="slip-subtitle">State Recruitment Committee</div>
-        </div>
-      </div>
-      <div class="text-end">
-        <div class="badge-chip">Serial No: ${escapeHtml(r.serial)}</div>
-        <div class="small">Issued: ${dateStr}</div>
-      </div>
+  <style>
+    .slip-container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background: #fff;
+    }
+
+    .media-row {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .media-row {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .slip-container {
+        padding: 15px;
+      }
+    }
+  </style>
+
+  <div class="slip-container">
+
+    <div class="text-center mb-3">
+      <h5>Appointment Notification Slip</h5>
+      <div class="small">State Recruitment Committee</div>
+      <div class="small">Issued: ${dateStr}</div>
     </div>
-  </div>
 
-  <div class="slip-body">
-
-    <div class="d-flex justify-content-between mb-3">
-      <div class="badge-chip">✅ SELECTED</div>
-      <div class="badge-chip">Ref: ${escapeHtml(r.reference)}</div>
+    <div class="text-center mb-3">
+      <strong>Reference:</strong> ${escapeHtml(r.reference)}
     </div>
 
-    <!-- PHOTO + QR -->
-    <div style="display:flex; justify-content:center; gap:60px; margin-bottom:30px;">
-
+    <div class="media-row">
       <div style="text-align:center;">
         <img src="${photo}"
-             style="width:190px; height:220px; object-fit:cover; border:1px solid #222;"
+             style="width:180px;height:220px;object-fit:cover;border:1px solid #333;"
              onerror="this.src='https://via.placeholder.com/240x280.png?text=Passport'">
-        <div class="small mt-2">Passport Photograph</div>
+        <div class="small mt-2">Passport</div>
       </div>
 
       <div style="text-align:center;">
         <img src="${qrUrl}"
-             style="width:180px; height:180px; border:1px solid #222;">
-        <div class="small mt-2">Scan for Verification</div>
-        <div class="small">${escapeHtml(r.reference)}</div>
+             style="width:180px;height:180px;border:1px solid #333;">
+        <div class="small mt-2">Scan to Verify</div>
+      </div>
+    </div>
+
+    <div class="text-center mb-3">
+      <h4>${escapeHtml(r.name)}</h4>
+    </div>
+
+    <div class="info-grid">
+
+      <div style="border:1px solid #ddd;padding:12px;">
+        <div style="font-size:12px;color:#666;">Course</div>
+        <div style="font-weight:600;">${escapeHtml(r.course)}</div>
+      </div>
+
+      <div style="border:1px solid #ddd;padding:12px;">
+        <div style="font-size:12px;color:#666;">Education Level</div>
+        <div style="font-weight:600;">${escapeHtml(edu)}</div>
+      </div>
+
+      <div style="border:1px solid #ddd;padding:12px;">
+        <div style="font-size:12px;color:#666;">LGA</div>
+        <div style="font-weight:600;">${escapeHtml(r.lga)}</div>
+      </div>
+
+      <div style="border:1px solid #ddd;padding:12px;">
+        <div style="font-size:12px;color:#666;">Serial Number</div>
+        <div style="font-weight:600;">${escapeHtml(r.serial)}</div>
       </div>
 
     </div>
 
-    <!-- NAME -->
-    <div style="text-align:center; margin-bottom:25px;">
-      <h4 style="margin:0;">${escapeHtml(r.name)}</h4>
-    </div>
-
-    <!-- BALANCED INFO GRID -->
-    <div style="
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:18px;
-      border-top:1px solid #ccc;
-      padding-top:25px;
-    ">
-
-      <div style="border:1px solid #ddd; padding:14px;">
-        <div style="font-size:12px; color:#666;">Course Studied</div>
-        <div style="font-weight:600; margin-top:4px;">${escapeHtml(r.course)}</div>
-      </div>
-
-      <div style="border:1px solid #ddd; padding:14px;">
-        <div style="font-size:12px; color:#666;">Education Level</div>
-        <div style="font-weight:600; margin-top:4px;">${escapeHtml(edu)}</div>
-      </div>
-
-      <div style="border:1px solid #ddd; padding:14px;">
-        <div style="font-size:12px; color:#666;">Local Government Area</div>
-        <div style="font-weight:600; margin-top:4px;">${escapeHtml(r.lga)}</div>
-      </div>
-
-      <div style="border:1px solid #ddd; padding:14px;">
-        <div style="font-size:12px; color:#666;">Serial Number</div>
-        <div style="font-weight:600; margin-top:4px;">${escapeHtml(r.serial)}</div>
-      </div>
-
-    </div>
-
-    <div class="notice-box mt-4">
-      <strong>📄 Next Steps</strong><br>
-      <strong>The printed slip should be presented at the Office of the State Head of Service</strong>, 
-      <strong>Usman Faruku Secretariat</strong> 🏢, 
-      together with the <strong>copies of your credentials at a date to be communicated later</strong>.
-    </div>
-
-    <div class="mt-4">
-      <div class="small">Signed by</div>
-      <strong>Barr. Gandi Umar Muhammad, mni</strong><br>
-      Secretary, State Recruitment Committee
+    <div style="margin-top:25px;font-size:14px;">
+      <strong>Next Steps:</strong><br>
+      Present this slip at the Office of the State Head of Service,
+      Usman Faruku Secretariat, with copies of your credentials.
     </div>
 
   </div>
   `;
 }
 
-/* ------------------------------
-   Tracking (GET – reliable)
--------------------------------- */
+/* ------------------------------ */
 function trackEvent(action, record) {
   try {
-    const url = TRACK_WEBHOOK_URL.replace(/^http:\/\//i, "https://");
     const params = new URLSearchParams({
       action,
       reference: normalizeRef(record.reference),
@@ -199,31 +191,21 @@ function trackEvent(action, record) {
       page: location.href,
       t: Date.now().toString(),
     });
-    new Image().src = `${url}?${params.toString()}`;
+    new Image().src = `${TRACK_WEBHOOK_URL}?${params.toString()}`;
   } catch (e) {}
 }
 
-/* ------------------------------
-   Print (iPhone safe)
--------------------------------- */
+/* ------------------------------ */
 function printSlip() {
   if (!currentRecord) return;
 
   trackEvent("generated", currentRecord);
 
-  try {
-    sessionStorage.setItem("SLIP_HTML", buildSlipHTML(currentRecord));
-    sessionStorage.setItem("SLIP_REF", normalizeRef(currentRecord.reference));
-    sessionStorage.setItem("SLIP_NAME", currentRecord.name || "");
-    sessionStorage.setItem("SLIP_SERIAL", String(currentRecord.serial || ""));
-  } catch (e) {}
-
+  sessionStorage.setItem("SLIP_HTML", buildSlipHTML(currentRecord));
   window.open("./print.html", "_blank");
 }
 
-/* ------------------------------
-   UI wiring
--------------------------------- */
+/* ------------------------------ */
 function wireUI() {
   $("#searchForm").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -261,9 +243,6 @@ function wireUI() {
   });
 }
 
-/* ------------------------------
-   Init
--------------------------------- */
 window.addEventListener("DOMContentLoaded", async () => {
   await loadData();
   wireUI();
