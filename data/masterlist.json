@@ -1234,12 +1234,12 @@
   },
   {
     "serial": 138,
-    "reference": "SKO-2025-54953",
-    "name": "Abdulrahman Hussaini Umar",
-    "course": "Economics",
+    "reference": "SKO-2025-88834",
+    "name": "Fadimatu Muhammad Ibrahim",
+    "course": "ISLAMIC EDUCATION",
     "lga": "Goronyo",
-    "educationLevel": "Degree",
-    "photoUrl": "https://employment-portal-uploads.s3.eu-west-1.amazonaws.com/photos/profiles/t2hnwpOLh1lOMQZyOvckE4i1yxkqry2JP1O7ClBD.jpg"
+    "educationLevel": "NCE",
+    "photoUrl": "https://employment-portal-uploads.s3.eu-west-1.amazonaws.com/photos/profiles/rB616KwOAHQhBVHsQbAEE7B6gYurt2CyNp3LO5QW.jpg"
   },
   {
     "serial": 139,
@@ -25864,5 +25864,24 @@
     "lga": "Sokoto North",
     "educationLevel": "Degree",
     "photoUrl": "https://employment-portal-uploads.s3.eu-west-1.amazonaws.com/photos/profiles/jSHm8hlBV8CJwGaHBbe5hBm6XCfP1DP8fAl37f2R.jpg"
+  },
+  {
+    "serial": 2875,
+    "reference": "SKO-2025-24648",
+    "name": "Hafsat Mansur",
+    "course": "Accounting",
+    "lga": "Sokoto North",
+    "educationLevel": "Degree",
+    "photoUrl": "https://employment-portal-uploads.s3.eu-west-1.amazonaws.com/photos/profiles/fdPCx4qNE8RAkXOe9FrGhktvbL3dzIjvi1sloVGc.jpg"
+  },
+  {
+    "serial": 2876,
+    "reference": "SKO-2025-75940",
+    "name": "Safiya bature",
+    "course": "English And Islamic Studies",
+    "lga": "Sokoto North",
+    "educationLevel": "NCE",
+    "photoUrl": "https://employment-portal-uploads.s3.eu-west-1.amazonaws.com/photos/profiles/022sIMry1HMoZ6RUqpgMotc3BfRa1ZoG46Y73K43.jpg"
   }
+  
 ]
