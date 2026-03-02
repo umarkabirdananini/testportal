@@ -1,5 +1,5 @@
 /* =========================================================
-   Selection Slip App – FINAL (Desktop + iPhone SAFE)
+   Selection Slip App – FINAL (Desktop + iPhone SAFE + QR)
    ========================================================= */
 
 let MASTER = [];
@@ -65,7 +65,7 @@ function escapeHtml(str) {
 }
 
 /* ------------------------------
-   Slip HTML
+   Slip HTML (UPDATED WITH QR)
 -------------------------------- */
 function buildSlipHTML(r) {
   const dateStr = new Date().toLocaleDateString(undefined, {
@@ -83,6 +83,11 @@ function buildSlipHTML(r) {
     r.educationLevel && r.educationLevel.trim()
       ? r.educationLevel.trim()
       : "—";
+
+  /* 🔹 QR generated directly from reference number (no encryption) */
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+    normalizeRef(r.reference)
+  )}`;
 
   return `
   <div class="slip-header">
@@ -111,6 +116,13 @@ function buildSlipHTML(r) {
     <div class="person-row">
       <img class="passport" src="${photo}"
            onerror="this.src='https://via.placeholder.com/240x280.png?text=Passport'">
+
+      <!-- ✅ QR BLOCK ADDED HERE -->
+      <div style="text-align:center;">
+        <img src="${qrUrl}" width="130" height="130">
+        <div class="small mt-1">${escapeHtml(r.reference)}</div>
+      </div>
+
       <div>
         <h4>${escapeHtml(r.name)}</h4>
 
@@ -124,10 +136,8 @@ function buildSlipHTML(r) {
     </div>
 
     <div class="notice-box mt-4">
-
-
         <strong> 📄 Next Steps</strong><br>
- <strong>The printed slip should be presented at the Office of the State Head of Service</strong> , 
+ <strong>The printed slip should be presented at the Office of the State Head of Service</strong>, 
 <strong> Usman Faruku Secretariat </strong> 🏢, 
  together with the <strong>copies of your credentials at a date to be communicated later</strong>.
     </div>
@@ -189,7 +199,6 @@ function wireUI() {
     const r = findRecordByRef(ref);
     currentRecord = r;
 
-    /* ❌ NOT FOUND MESSAGE (exact text requested) */
     if (!r) {
       showStatus(
         "danger",
@@ -200,7 +209,6 @@ function wireUI() {
       return;
     }
 
-    /* ✅ FOUND MESSAGE */
     showStatus(
       "success",
       `<div class="fw-bold">Congratulations!</div>
@@ -211,7 +219,6 @@ function wireUI() {
     $("#slip").innerHTML = buildSlipHTML(r);
   });
 
-  /* Guaranteed print binding */
   document.addEventListener("click", (e) => {
     if (e.target.closest("#printBtn")) {
       e.preventDefault();
